@@ -16,7 +16,7 @@ jobs:
       runner: ${{ matrix.runner}}
       name: ${{ matrix.flatpak.name }}
       id: ${{ matrix.flatpak.id }}
-  push_repo:
+  merge:
     permissions:
       contents: write
     secrets: inherit

@@ -1,7 +1,7 @@
 on:
   workflow_call: {}
 jobs:
-  deploy_repo:
+  merge:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-24.08
