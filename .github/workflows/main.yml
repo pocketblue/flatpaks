@@ -21,4 +21,4 @@ jobs:
       contents: write
     secrets: inherit
     needs: flatpak-build
-    uses: ./.github/workflows/deploy-repo.yml
+    uses: ./.github/workflows/merge.yml

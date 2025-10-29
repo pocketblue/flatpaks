@@ -19,17 +19,16 @@ jobs:
           path: artifacts
       - name: write metadata
         run: |
-          mkdir ./deploy/repo
-          ostree init --mode=archive-z2 --repo ./deploy/repo
-          for dir in ./artifacts/* ; do
+          mkdir out/repo
+          ostree init --mode=archive-z2 --repo out/repo
+          for dir in artifacts/* ; do
             mkdir -p $dir/refs/remotes $dir/refs/mirrors
             touch $dir/refs/remotes/.gitkeep $dir/refs/mirrors/.gitkeep
-            ostree --repo=./deploy/repo pull-local $dir
+            ostree --repo=out/repo pull-local $dir
           done
-          flatpak build-update-repo --gpg-sign=gmankab@gmail.com ./deploy/repo
-      - name: deploy to github pages
-        uses: peaceiris/actions-gh-pages@v4
+          flatpak build-update-repo --gpg-sign=gmankab@gmail.com out/repo
+      - name: upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./deploy
-          force_orphan: true
+          name: merged-flatpaks
+          path: out
