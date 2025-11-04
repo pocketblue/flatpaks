@@ -2,20 +2,26 @@ on:
   workflow_dispatch: {}
 jobs:
   flatpak-build:
-    secrets: inherit
     strategy:
       matrix:
-        runner: [ubuntu-24.04, ubuntu-24.04-arm]
         flatpak:
           - name: handyfox
             id: io.github.pocketblue.handyfox
           - name: firefox-systemconfig
             id: org.mozilla.firefox.systemconfig
+        runner:
+          - name: ubuntu-24.04
+            arch: x86_64
+          - name: ubuntu-24.04-arm
+            arch: aarch64
+    name: ${{ matrix.flatpak.name }} ${{ matrix.runner.arch }}
+    secrets: inherit
     uses: ./.github/workflows/flatpak-build.yml
     with:
-      runner: ${{ matrix.runner}}
-      name: ${{ matrix.flatpak.name }}
-      id: ${{ matrix.flatpak.id }}
+      runner_name: ${{ matrix.runner.name }}
+      runner_arch: ${{ matrix.runner.arch }}
+      flatpak_name: ${{ matrix.flatpak.name }}
+      flatpak_id: ${{ matrix.flatpak.id }}
   merge:
     permissions:
       contents: write

@@ -1,19 +1,22 @@
 on:
   workflow_call:
     inputs:
-      runner:
+      runner_name:
         required: true
         type: string
-      name:
+      runner_arch:
         required: true
         type: string
-      id:
+      flatpak_name:
+        required: true
+        type: string
+      flatpak_id:
         required: true
         type: string
 jobs:
   flatpak-build:
-    name: ${{ inputs.name }}
-    runs-on: ${{ inputs.runner }}
+    name: ${{ inputs.flatpak_name }} ${{ inputs.runner_arch }}
+    runs-on: ${{ inputs.runner_name }}
     container:
       image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-24.08
       options: --privileged
@@ -22,14 +25,11 @@ jobs:
       - name: build
         run: |
           echo '${{ secrets.private_gpg }}' | gpg --import
-          git clone 'https://github.com/pocketblue/${{ inputs.name }}'
+          git clone 'https://github.com/pocketblue/${{ inputs.flatpak_name }}'
           flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-          flatpak-builder --disable-rofiles-fuse --user --gpg-sign='${{ vars.gpg_email }}' --install-deps-from=flathub --repo=repo ./build '${{ inputs.name }}/${{ inputs.id }}.yml'
-      - name: arch
-        id: arch
-        run: echo arch=$(uname -m) >> $GITHUB_OUTPUT
+          flatpak-builder --disable-rofiles-fuse --user --gpg-sign='${{ vars.gpg_email }}' --install-deps-from=flathub --repo=repo ./build '${{ inputs.flatpak_name }}/${{ inputs.flatpak_id }}.yml'
       - name: upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ inputs.id }}-${{ steps.arch.outputs.arch }}
+          name: ${{ inputs.flatpak_id }}-${{ inputs.runner_arch }}
           path: repo
