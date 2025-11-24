@@ -21,10 +21,8 @@ jobs:
         run: |
           mkdir out/repo
           ostree init --mode=archive-z2 --repo out/repo
-          for dir in artifacts/* ; do
-            mkdir -p $dir/refs/remotes $dir/refs/mirrors
-            touch $dir/refs/remotes/.gitkeep $dir/refs/mirrors/.gitkeep
-            ostree --repo=out/repo pull-local $dir
+          for bundle in artifacts/*/*.flatpak ; do
+            flatpak build-import-bundle out/repo "$bundle"
           done
           flatpak build-update-repo --gpg-sign='${{ vars.gpg_email }}' out/repo
       - name: upload artifact

@@ -7,8 +7,10 @@ jobs:
         flatpak:
           - name: handyfox
             id: io.github.pocketblue.handyfox
+            builder_args: master
           - name: firefox-systemconfig
             id: org.mozilla.firefox.systemconfig
+            builder_args: stable --runtime
         runner:
           - name: ubuntu-24.04
             arch: x86_64
@@ -22,6 +24,7 @@ jobs:
       runner_arch: ${{ matrix.runner.arch }}
       flatpak_name: ${{ matrix.flatpak.name }}
       flatpak_id: ${{ matrix.flatpak.id }}
+      flatpak_builder_args: ${{ matrix.flatpak.builder_args }}
   merge:
     permissions:
       contents: write

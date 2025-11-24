@@ -13,6 +13,10 @@ on:
       flatpak_id:
         required: true
         type: string
+      flatpak_builder_args:
+        default: master
+        required: false
+        type: string
 jobs:
   flatpak-build:
     name: ${{ inputs.flatpak_name }} ${{ inputs.runner_arch }}
@@ -28,8 +32,9 @@ jobs:
           git clone 'https://github.com/pocketblue/${{ inputs.flatpak_name }}'
           flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
           flatpak-builder --disable-rofiles-fuse --user --gpg-sign='${{ vars.gpg_email }}' --install-deps-from=flathub --repo=repo ./build '${{ inputs.flatpak_name }}/${{ inputs.flatpak_id }}.yml'
+          flatpak build-bundle ./repo '${{ inputs.flatpak_name }}-${{ inputs.runner_arch }}.flatpak' '${{ inputs.flatpak_id }}' ${{ inputs.flatpak_builder_args }}
       - name: upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ inputs.flatpak_id }}-${{ inputs.runner_arch }}
-          path: repo
+          name: ${{ inputs.flatpak_name }}-${{ inputs.runner_arch }}
+          path: ${{ inputs.flatpak_name }}-${{ inputs.runner_arch }}.flatpak
