@@ -18,7 +18,7 @@ jobs:
     name: ${{ inputs.flatpak_name }} ${{ inputs.runner_arch }}
     runs-on: ${{ inputs.runner_name }}
     container:
-      image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-24.08
+      image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-25.08
       options: --privileged
     steps:
       - uses: actions/checkout@v4
