@@ -1,7 +1,7 @@
 on:
   workflow_dispatch: {}
 jobs:
-  flatpak-build:
+  flatpak-build-helper:
     strategy:
       matrix:
         flatpak:
@@ -18,16 +18,16 @@ jobs:
             arch: aarch64
     name: ${{ matrix.flatpak.name }} ${{ matrix.runner.arch }}
     secrets: inherit
-    uses: ./.github/workflows/flatpak-build.yml
+    uses: ./.github/workflows/flatpak-build-helper.yml
     with:
       runner_name: ${{ matrix.runner.name }}
       runner_arch: ${{ matrix.runner.arch }}
       flatpak_name: ${{ matrix.flatpak.name }}
       flatpak_id: ${{ matrix.flatpak.id }}
       flatpak_builder_args: ${{ matrix.flatpak.builder_args }}
-  merge:
+  flatpak-repo-merge:
     permissions:
       contents: write
     secrets: inherit
-    needs: flatpak-build
-    uses: ./.github/workflows/merge.yml
+    needs: flatpak-build-helper
+    uses: ./.github/workflows/flatpak-repo-merge.yml

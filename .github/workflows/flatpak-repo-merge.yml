@@ -1,32 +1,30 @@
 on:
   workflow_call: {}
 jobs:
-  merge:
-    runs-on: ubuntu-latest
+  flatpak-repo-merge:
+    runs-on: ubuntu-24.04
     container:
-      image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-24.08
+      image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-25.08
       options: --privileged
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      - name: deps
+      - name: import gpg key
         run: |
           echo '${{ secrets.private_gpg }}' | gpg --import
-      - name: download artifacts
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
           path: artifacts
-      - name: write metadata
+      - name: merge repo
         run: |
           mkdir out/repo
           ostree init --mode=archive-z2 --repo out/repo
           for bundle in artifacts/*/*.flatpak ; do
-            flatpak build-import-bundle out/repo "$bundle"
+            flatpak build-import-bundle out/repo $bundle
           done
           flatpak build-update-repo --gpg-sign='${{ vars.gpg_email }}' out/repo
-      - name: upload artifact
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: merged-flatpaks
           path: out

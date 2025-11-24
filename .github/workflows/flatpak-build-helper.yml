@@ -18,7 +18,7 @@ on:
         required: false
         type: string
 jobs:
-  flatpak-build:
+  flatpak-build-helper:
     name: ${{ inputs.flatpak_name }} ${{ inputs.runner_arch }}
     runs-on: ${{ inputs.runner_name }}
     container:
